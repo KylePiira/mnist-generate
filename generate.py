@@ -28,7 +28,7 @@ model = Model(onehot_input, decoded)
 model.compile(loss='mse', optimizer='adam')
 
 model.fit(x, y,
-	epochs=50,
+	epochs=15,
 	batch_size=128,
 	shuffle=True,
 )
