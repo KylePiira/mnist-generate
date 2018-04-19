@@ -5,12 +5,19 @@ import matplotlib.pyplot as plt
 # General
 import argparse
 import random
+import time
+import os
 
 parser = argparse.ArgumentParser(description='Sample the MNIST generator.')
 parser.add_argument('--num',
 	default=random.randint(0,9), 
 	help='the number you want to generate.',
 	type=int,
+)
+parser.add_argument('--mode',
+	default='display', 
+	help='the mode to create training data in. Either: display or save',
+	type=str,
 )
 
 args = parser.parse_args()
@@ -24,12 +31,16 @@ model = load_model('mnist_gen.model')
 x = np.zeros(10)
 x[args.num] = 1.
 
-print(x)
+for _ in range(10):
+	# Predict vector
+	prediction = model.predict(np.array([x]))[0].reshape((28,28))
+	# prediction = np.round(prediction)
+	prediction[prediction < 0.3] = 0
 
-# Predict vector
-prediction = model.predict(np.array([x]))[0].reshape((28,28))
-prediction = np.round(prediction)
+	# Pretty print prediction
+	plt.imshow(prediction, cmap='Greys')
 
-# Pretty print prediction
-plt.imshow(prediction, cmap='Greys')
-plt.show()
+	if args.mode == 'display':
+		plt.show()
+	elif args.mode == 'save':
+		plt.savefig('save/{}/{}.png'.format(args.num, int(time.time()*10)))
